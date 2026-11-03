@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "stockcontrol-v3";
+const CACHE_NAME = "stockcontrol-v4";
 
 const ARCHIVOS = [
     "./",

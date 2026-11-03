@@ -1,0 +1,595 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>StockControl | Panel administrativo</title>
+
+    <link rel="stylesheet" href="styles.css">
+
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#17243a">
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <!-- MENU LATERAL -->
+        <aside class="sidebar" id="sidebar">
+
+            <button type="button" id="closeMenu" class="close-menu">
+                ✕
+            </button>
+
+            <div class="brand">
+                <div class="brand-icon">SC</div>
+
+                <div>
+                    <h2>StockControl</h2>
+                    <span>Gestión empresarial</span>
+                </div>
+            </div>
+
+            <div class="menu-title">MENÚ PRINCIPAL</div>
+
+            <nav class="menu">
+
+                <button class="nav-button active" data-page="inicio">
+                    <span>⌂</span> Inicio
+                </button>
+
+                <button class="nav-button" data-page="productos">
+                    <span>▣</span> Productos
+                </button>
+
+                <button class="nav-button" data-page="inventario">
+                    <span>▤</span> Inventario
+                </button>
+
+                <button class="nav-button" data-page="ventas">
+                    <span>＄</span> Ventas
+                </button>
+
+                <button class="nav-button" data-page="reportes">
+                    <span>▥</span> Reportes
+                </button>
+
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="user-avatar">AD</div>
+
+                <div class="user-info">
+                    <strong>Administrador</strong>
+                    <span>Cuenta principal</span>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- FONDO OSCURO DEL MENU -->
+        <div class="menu-overlay" id="menuOverlay"></div>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="main-content">
+
+            <!-- ENCABEZADO -->
+            <header class="topbar">
+
+                <button class="menu-toggle" id="menuToggle">
+                    ☰
+                </button>
+
+                <div>
+                    <h1>Panel principal</h1>
+                    <p>Resumen general de tu negocio</p>
+                </div>
+
+                <div class="topbar-right">
+                    <span class="status">● Sistema activo</span>
+                </div>
+
+            </header>
+
+
+            <!-- CONTENIDO DEL PANEL -->
+            <section class="dashboard">
+
+                <div class="welcome">
+                    <div>
+                        <h2>¡Bienvenido a StockControl!</h2>
+
+                        <p>
+                            Aquí puedes consultar el estado
+                            general de tu inventario.
+                        </p>
+                    </div>
+
+                    <button class="primary-button" id="newProduct">
+                        + Nuevo producto
+                    </button>
+                </div>
+
+
+                <!-- TARJETAS DE INFORMACION -->
+                <div class="stats-grid">
+
+                    <article class="stat-card">
+                        <div class="stat-icon blue">▣</div>
+
+                        <p>Total de productos</p>
+
+                        <h3 id="totalProducts">0</h3>
+
+                        <span>Productos registrados</span>
+                    </article>
+
+
+                    <article class="stat-card">
+                        <div class="stat-icon green">＄</div>
+
+                        <p>Ventas del día</p>
+
+                        <h3 id="dailySales">$0.00</h3>
+
+                        <span>Importe de demostración</span>
+                    </article>
+
+
+                    <article class="stat-card">
+                        <div class="stat-icon orange">⚠</div>
+
+                        <p>Stock bajo</p>
+
+                        <h3 id="lowStockProducts">0</h3>
+
+                        <span>Productos por revisar</span>
+                    </article>
+
+
+                    <article class="stat-card">
+                        <div class="stat-icon purple">▤</div>
+
+                        <p>Unidades disponibles</p>
+
+                        <h3 id="totalUnits">0</h3>
+
+                        <span>Existencias de demostración</span>
+                    </article>
+
+                </div>
+
+                
+        <!-- TABLA DE PRODUCTOS -->
+        <section class="content-card">
+
+            <div class="section-header">
+                <div>
+                    <h2>Productos recientes</h2>
+                    <p>Administra los productos de tu negocio</p>
+                </div>
+
+                <input
+                    type="search"
+                    id="searchProduct"
+                    placeholder="Buscar producto..."
+                >
+
+                <div class="backup-buttons">
+                    <button type="button" id="exportProducts">
+                        Exportar inventario
+                    </button>
+
+                    <button type="button" id="importProducts">
+                        Importar inventario
+                    </button>
+
+                    <input
+                        type="file"
+                        id="importFile"
+                        accept=".json"
+                        hidden
+                    >
+                </div>
+            </div>
+
+            <button class="text-button" data-page="productos">
+                Ver productos
+            </button>
+
+            <!-- TABLA INDEPENDIENTE DE PRODUCTOS -->
+            <div class="table-container product-table-container">
+
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Categoría</th>
+                            <th>Precio</th>
+                            <th>Existencias</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="productTableBody"></tbody>
+                </table>
+
+            </div>
+
+        </section>
+
+                <!-- MODULO DE VENTAS -->
+                <section class="sales-section">
+
+                    <div class="section-header">
+                        <div>
+                            <h2>Registrar venta</h2>
+                            <p>Realiza una venta de productos del inventario</p>
+                        </div>
+                    </div>
+
+                    <form id="salesForm" class="sales-form">
+
+                        <div class="form-group">
+                            <label for="saleProduct">Producto</label>
+
+                            <select id="saleProduct" required>
+                                <option value="">Selecciona un producto</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="saleQuantity">Cantidad</label>
+
+                            <input
+                                type="number"
+                                id="saleQuantity"
+                                min="1"
+                                value="1"
+                                required
+                            >
+                        </div>
+
+                        <div class="sale-total">
+                            <span>Total de venta</span>
+                            <h3 id="saleTotal">$0.00</h3>
+                        </div>
+
+                        <button type="submit" class="sale-button">
+                            Confirmar venta
+                        </button>
+
+                    </form>
+
+                </section>
+
+                <!-- GESTION DE CATEGORIAS -->
+                <section class="sales-section" id="categoriesSection">
+
+                    <div class="section-header">
+                        <div>
+                            <h2>Gestión de categorías</h2>
+                            <p>Administra las categorías de tus productos</p>
+                        </div>
+                    </div>
+
+                    <form id="categoryForm" class="sales-form">
+
+                        <div class="form-group">
+                            <label for="categoryName">Nombre de la categoría</label>
+
+                            <input
+                                type="text"
+                                id="categoryName"
+                                placeholder="Ej. Electrónica"
+                                required
+                            >
+                        </div>
+
+                        <button type="submit" class="sale-button">
+                            Agregar categoría
+                        </button>
+
+                    </form>
+
+                    <div class="table-container">
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nombre de categoría</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="categoriesTableBody"></tbody>
+                        </table>
+
+                    </div>
+
+                </section>
+
+                <!-- ALERTAS DE INVENTARIO -->
+                <section class="sales-section" id="inventoryAlertsSection">
+
+                    <div class="section-header">
+                        <div>
+                            <h2>Alertas de inventario</h2>
+                            <p>Productos que necesitan atención</p>
+                        </div>
+                    </div>
+
+                    <div id="inventoryAlerts"></div>
+
+                </section>
+
+
+                <!-- ALERTAS -->
+                <section class="content-card alerts-card">
+
+                    <div class="section-header">
+                        <div>
+                            <h2>Alertas de inventario</h2>
+                            <p>Productos que requieren atención</p>
+                        </div>
+                    </div>
+
+                    <div class="alert-item">
+                        <span class="alert-dot"></span>
+
+                        <div>
+                            <strong>Mouse inalámbrico</strong>
+                            <p>Solamente quedan 3 unidades.</p>
+                        </div>
+                    </div>
+
+                    <div class="alert-item">
+                        <span class="alert-dot red"></span>
+
+                        <div>
+                            <strong>Disco SSD 500 GB</strong>
+                            <p>Este producto está agotado.</p>
+                        </div>
+                    </div>
+
+                </section>
+
+                <footer>
+                    StockControl © 2026 | Sistema de gestión de inventario
+                </footer>
+
+            </section>
+
+            <!-- HISTORIAL DE VENTAS -->
+
+            <section class="sales-section">
+
+                <div class="section-header">
+                    <div>
+                        <h2>Historial de ventas</h2>
+                        <p>Consulta las operaciones realizadas</p>
+                    </div>
+                </div>
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio unitario</th>
+                                <th>Total</th>
+                                <th>Fecha y hora</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="salesHistoryBody">
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+            <!-- REPORTES Y ESTADISTICAS -->
+
+            <section class="sales-section" id="reportsSection">
+
+                <div class="section-header">
+                    <div>
+                        <h2>Reportes y estadísticas</h2>
+                        <p>Resumen del rendimiento de tu negocio</p>
+                    </div>
+                </div>
+
+                <div class="reports-grid">
+
+                    <div class="report-card">
+                        <span>Ingresos totales</span>
+                        <h3 id="totalRevenue">$0.00</h3>
+                    </div>
+
+                    <div class="report-card">
+                        <span>Ventas realizadas</span>
+                        <h3 id="totalTransactions">0</h3>
+                    </div>
+
+                    <div class="report-card">
+                        <span>Unidades vendidas</span>
+                        <h3 id="totalUnitsSold">0</h3>
+                    </div>
+
+                    <div class="report-card">
+                        <span>Ticket promedio</span>
+                        <h3 id="averageSale">$0.00</h3>
+                    </div>
+
+                </div>
+
+                <div class="section-header reports-title">
+                    <div>
+                        <h2>Productos más vendidos</h2>
+                        <p>Clasificación según unidades vendidas</p>
+                    </div>
+                </div>
+
+                <div class="table-container">
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Unidades vendidas</th>
+                                <th>Ingresos generados</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="topProductsBody">
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </section>
+
+            <!-- GESTION DE CLIENTES -->
+
+            <section class="sales-section" id="clientsSection">
+
+                <div class="section-header">
+                    <div>
+                        <h2>Gestión de clientes</h2>
+                        <p>Administra la información de tus clientes</p>
+                    </div>
+                </div>
+
+                <!-- FORMULARIO DE CLIENTES -->
+
+                <form id="clientForm">
+
+                    <div class="form-group">
+                        <label for="clientName">Nombre del cliente</label>
+                        <input
+                            type="text"
+                            id="clientName"
+                            placeholder="Ej. Juan Pérez"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="clientPhone">Número de teléfono</label>
+                        <input
+                            type="tel"
+                            id="clientPhone"
+                            placeholder="Ej. 8711234567"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit">
+                        Registrar cliente
+                    </button>
+
+                </form>
+
+                <!-- TABLA DE CLIENTES -->
+
+                <div class="table-container">
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Teléfono</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="clientsTableBody">
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+
+    <!-- FORMULARIO PARA REGISTRAR PRODUCTOS -->
+<div class="modal" id="productModal" hidden>
+    <div class="modal-content">
+        <div class="modal-header">
+            <div>
+                <h2>Registrar producto</h2>
+                <p>Completa los datos del nuevo producto.</p>
+            </div>
+
+            <button type="button" id="closeModal" class="close-button">
+                &times;
+            </button>
+        </div>
+
+        <form id="productForm">
+            <label for="productName">Nombre del producto</label>
+            <input
+                type="text"
+                id="productName"
+                placeholder="Ej. Teclado mecánico"
+                required
+            >
+
+            <label for="productCategory">Categoría</label>
+            <select id="productCategory" required>
+                <option value="">Selecciona una categoría</option>
+            </select>
+
+            <label for="productPrice">Precio de venta</label>
+            <input
+                type="number"
+                id="productPrice"
+                placeholder="Ej. 250"
+                min="0.01"
+                step="0.01"
+                required
+            >
+
+            <label for="productQuantity">Cantidad disponible</label>
+            <input
+                type="number"
+                id="productQuantity"
+                placeholder="Ej. 15"
+                min="0"
+                step="1"
+                required
+            >
+
+            <div class="modal-actions">
+                <button type="button" id="cancelModal" class="cancel-button">
+                    Cancelar
+                </button>
+
+                <button type="submit" class="save-button">
+                    Guardar producto
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="app.js"></script>
+</body>
+
+</html>

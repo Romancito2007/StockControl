@@ -1196,7 +1196,9 @@ tablaProductos.addEventListener("click", function(evento) {
 
 // NAVEGACION DEL MENU
 
+
 botonesMenu.forEach(function(boton) {
+
     boton.addEventListener("click", function() {
 
         botonesMenu.forEach(function(elemento) {
@@ -1207,16 +1209,31 @@ botonesMenu.forEach(function(boton) {
 
         const seccion = boton.dataset.page;
 
-        if (seccion === "inicio") {
-            mostrarMensaje("Estás en el panel principal.");
-        } else {
-            mostrarMensaje("La sección estará disponible en próximas clases.");
+        // DESTINOS DEL MENU
+        const destinos = {
+            inicio: document.querySelector(".dashboard"),
+            productos: document.querySelector(".product-table-container"),
+            inventario: document.getElementById("inventoryAlertsSection"),
+            ventas: document.getElementById("salesForm"),
+            reportes: document.getElementById("reportsSection")
+        };
+
+        const destino = destinos[seccion];
+
+        if (destino) {
+            destino.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
         }
 
         barraLateral.classList.remove("show");
         menuOverlay.classList.remove("show");
+
     });
+
 });
+
 
 // ABRIR MENU
 
